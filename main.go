@@ -19,7 +19,7 @@ func NewApp() *App {
 func SetupRoutes(app *fiber.App) *fiber.App {
 	app.Get("/", func(c fiber.Ctx) error {
 		// Send a string response to the client
-		return c.SendString("Hello, World 👋!")
+		return c.SendString("Use the eval Endpoint to access the expression engine")
 	})
 	app.Post("/eval", eval)
 	return app
