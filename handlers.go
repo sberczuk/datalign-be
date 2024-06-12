@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/log"
+	"net/http"
 	"strconv"
 )
 
@@ -28,5 +29,14 @@ func eval(c fiber.Ctx) error {
 	respValue := strconv.FormatFloat(expression, 'E', -1, 32)
 
 	log.Infof("returning answer %s for ", respValue, payload.Input)
-	return c.JSON(fiber.Map{"answer": respValue})
+	c.Status(http.StatusOK)
+	err = c.JSON(fiber.Map{
+		"answer": respValue,
+	},
+	)
+	if err != nil {
+		return c.SendStatus(500)
+	}
+	c.Set("Content-type", "application/json; charset=utf-8")
+	return err
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/log"
+	"github.com/gofiber/fiber/v3/middleware/cors"
 )
 
 type App struct {
@@ -29,6 +30,10 @@ func main() {
 	// Initialize a new Fiber app
 	app := NewApp()
 
+	app.app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowHeaders: "Origin, Content-Type, Accept",
+	}))
 	// Define a route for the GET method on the root path '/'
 	SetupRoutes(app.app)
 	// Start the server on port 3000
