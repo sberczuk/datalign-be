@@ -20,19 +20,19 @@ func eval(c fiber.Ctx) error {
 	err := json.Unmarshal(body, &payload)
 	if err != nil {
 		log.Errorf("bad request for payload %v", string(body))
-		return c.SendStatus(400)
+		return c.Status(400).SendString(err.Error())
 	}
 
 	err = validateExpression(payload.Input)
 	if err != nil {
-		return c.SendStatus(400)
+		return c.Status(400).SendString(err.Error())
 	}
 
 	log.Infof("processing %s", payload)
 	expression, err := evaluateExpression(payload.Input)
 	if err != nil {
 		log.Errorf("Error evaluating %s", payload.Input)
-		return c.SendStatus(500)
+		return c.Status(500).SendString(err.Error())
 	}
 	respValue := strconv.FormatFloat(expression, 'f', -1, 32)
 
