@@ -37,6 +37,8 @@ func TestEvalRoute(t *testing.T) {
 			expectedBody:  "5",
 		},
 		{
+			// this error can come from the eval or the validation.
+			// TODO: Add a message
 			description:   "evalRoute error",
 			body:          "3+&2",
 			route:         "/eval",
