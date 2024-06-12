@@ -21,7 +21,6 @@ func SetupRoutes(app *fiber.App) *fiber.App {
 		// Send a string response to the client
 		return c.SendString("Hello, World 👋!")
 	})
-	app.Get("/hello", home2)
 	app.Post("/eval", eval)
 	return app
 }
@@ -41,9 +40,4 @@ func main() {
 	//TODO: This should be configurable
 	log.Fatal(app.app.Listen(":3000"))
 
-}
-
-func home2(c fiber.Ctx) error {
-	// Send a string response to the client
-	return c.SendString("Hello, World WWWW 👋!")
 }
