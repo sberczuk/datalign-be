@@ -2,9 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/log"
 	"net/http"
+	"regexp"
 	"strconv"
 )
 
@@ -20,6 +22,12 @@ func eval(c fiber.Ctx) error {
 		log.Errorf("bad request for payload %v", string(body))
 		return c.SendStatus(400)
 	}
+
+	err = validateExpression(payload.Input)
+	if err != nil {
+		return c.SendStatus(400)
+	}
+
 	log.Infof("processing %s", payload)
 	expression, err := evaluateExpression(payload.Input)
 	if err != nil {
@@ -39,4 +47,22 @@ func eval(c fiber.Ctx) error {
 	}
 	c.Set("Content-type", "application/json; charset=utf-8")
 	return err
+}
+
+func validateExpression(input string) error {
+
+	// ideally I'd use go Playground validator, but since this is simple and in the interests of time I'll
+	// use a regex
+	if len(input) == 0 {
+		return fmt.Errorf("empty expression")
+	}
+
+	matched, err := regexp.Match(`^[\d\\+\-*\/ \(\)\.]+$`, []byte(input))
+
+	if !matched || err != nil {
+		return fmt.Errorf("invalid chars")
+
+	}
+
+	return nil
 }
