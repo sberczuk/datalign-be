@@ -26,7 +26,7 @@ func eval(c fiber.Ctx) error {
 		log.Errorf("Error evaluating %s", payload.Input)
 		return c.SendStatus(500)
 	}
-	respValue := strconv.FormatFloat(expression, 'E', -1, 32)
+	respValue := strconv.FormatFloat(expression, 'f', -1, 32)
 
 	log.Infof("returning answer %s for ", respValue, payload.Input)
 	c.Status(http.StatusOK)
