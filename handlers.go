@@ -10,16 +10,26 @@ import (
 	"strconv"
 )
 
+const MAX_REQUEST_LENGTH = 320000
+
 // post the payload
 func eval(c fiber.Ctx) error {
 	payload := struct {
 		Input string
 	}{}
 	body := c.Body()
-	log.Infof("Got a request %V", string(body))
+
+	requestEval := string(body)
+	requestLength := len(requestEval)
+	log.Infof("reqeust length = %d", requestLength)
+	if requestLength > MAX_REQUEST_LENGTH {
+		return c.Status(413).SendString("request is too large")
+	}
+
+	log.Infof("Got a request %V", requestEval)
 	err := json.Unmarshal(body, &payload)
 	if err != nil {
-		log.Errorf("bad request for payload %v", string(body))
+		log.Errorf("bad request for payload %v", requestEval)
 		return c.Status(400).SendString(err.Error())
 	}
 

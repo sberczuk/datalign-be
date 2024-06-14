@@ -12,7 +12,37 @@ import (
 
 func Test_sendRequest(t *testing.T) {
 
-	value := makeBody()
+	value := makeBody(3200)
+	payload := struct {
+		Input string
+	}{Input: value}
+
+	marshal, err := json.Marshal(payload)
+	if err != nil {
+		panic(err)
+	}
+
+	post(marshal)
+}
+
+func Test_sendHugeRequest(t *testing.T) {
+
+	value := makeBody(32000)
+	payload := struct {
+		Input string
+	}{Input: value}
+
+	marshal, err := json.Marshal(payload)
+	if err != nil {
+		panic(err)
+	}
+
+	post(marshal)
+}
+
+func Test_sendVeryHugeRequest(t *testing.T) {
+
+	value := makeBody(320000)
 	payload := struct {
 		Input string
 	}{Input: value}
@@ -62,10 +92,10 @@ func post(marshal []byte) error {
 	return nil
 }
 
-func makeBody() string {
+func makeBody(n int) string {
 	atom := "42-42+16-16+1+42-42+16-16+1+42-42+16-16+1+42-42+16-16+1+42-42+16-16+1+"
 	var b []byte
-	for i := 0; i < 3200; i++ {
+	for i := 0; i < n; i++ {
 		b = append(b, atom...)
 	}
 	b = append(b, []byte("3")...)
