@@ -22,6 +22,25 @@ func Test_sendRequest(t *testing.T) {
 		panic(err)
 	}
 
+	post(marshal)
+}
+
+func Test_sendBadRequest(t *testing.T) {
+
+	value := makeErrorBody()
+	payload := struct {
+		Input string
+	}{Input: value}
+
+	marshal, err := json.Marshal(payload)
+	if err != nil {
+		panic(err)
+	}
+
+	post(marshal)
+}
+
+func post(marshal []byte) error {
 	requestURL := fmt.Sprintf("http://localhost:%d/eval", 3000)
 	req, err := http.NewRequest(http.MethodPost, requestURL, bytes.NewReader(marshal))
 	if err != nil {
@@ -36,7 +55,11 @@ func Test_sendRequest(t *testing.T) {
 	}
 	fmt.Println(res.Status)
 	resBody, err := io.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
 	fmt.Println(string(resBody))
+	return nil
 }
 
 func makeBody() string {
@@ -46,5 +69,15 @@ func makeBody() string {
 		b = append(b, atom...)
 	}
 	b = append(b, []byte("3")...)
+	return string(b)
+}
+
+func makeErrorBody() string {
+	atom := "42-42+16-16+1+42-42+16-16+1+42-42+16-16+1+42-42+16-16+1+42-42+16-16+1+"
+	var b []byte
+	for i := 0; i < 3200; i++ {
+		b = append(b, atom...)
+	}
+	b = append(b, []byte("3+")...)
 	return string(b)
 }
