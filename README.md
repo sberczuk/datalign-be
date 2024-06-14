@@ -28,7 +28,7 @@ There are some TODOs ih the code that highlight a few issues. This (pverlapping)
 
  ```bash
 docker build -t datalign-backend .
-docker run datalign-backend -p 3000:3000
+docker run  -p 3000:3000 datalign-backend
  ```
 
 # Choices

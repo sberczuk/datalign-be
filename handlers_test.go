@@ -36,6 +36,13 @@ func Test_validateExpression(t *testing.T) {
 			},
 			wantErr: assert.Error,
 		},
+		{
+			name: "does not end with number",
+			args: args{
+				input: "(1+2*3.2-4 /8+)",
+			},
+			wantErr: assert.Error,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
