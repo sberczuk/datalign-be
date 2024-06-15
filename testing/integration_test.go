@@ -2,6 +2,9 @@
 
 package testing
 
+// run this test when developing
+// not integrated with go test
+
 import (
 	"bytes"
 	"encoding/json"
@@ -12,7 +15,7 @@ import (
 	"testing"
 )
 
-func Test_sendRequest(t *testing.T) {
+func TestSendRequest(t *testing.T) {
 
 	value := makeBody(3200)
 	payload := struct {
