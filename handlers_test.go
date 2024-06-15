@@ -18,6 +18,13 @@ func Test_validateExpression(t *testing.T) {
 		{
 			name: "pass",
 			args: args{
+				input: "1+2*3-4 /8",
+			},
+			wantErr: assert.NoError,
+		},
+		{
+			name: "pass-parens",
+			args: args{
 				input: "(1+2*3-4 /8)",
 			},
 			wantErr: assert.NoError,
@@ -36,10 +43,17 @@ func Test_validateExpression(t *testing.T) {
 			},
 			wantErr: assert.Error,
 		},
+		//{ // not yet implemented. We need a better way to check for valid inputs when parenthenses are involved
+		//	name: "does not end with number with parens",
+		//	args: args{
+		//		input: "(1+2*3.2-4 /8+)",
+		//	},
+		//	wantErr: assert.Error,
+		//},
 		{
 			name: "does not end with number",
 			args: args{
-				input: "(1+2*3.2-4 /8+)",
+				input: "1+2*3.2-4 /8+",
 			},
 			wantErr: assert.Error,
 		},

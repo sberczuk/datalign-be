@@ -67,11 +67,10 @@ func validateExpression(input string) error {
 		return fmt.Errorf("empty expression")
 	}
 
-	matched, err := regexp.Match(`^[\d\\+\-*\/ \(\)\.]+\d$`, []byte(input))
+	matched, err := regexp.Match(`^[\d\\+\-*\/ \(\)\.]+[\d\)]$`, []byte(input))
 
 	if !matched || err != nil {
 		return fmt.Errorf("invalid chars")
-
 	}
 
 	return nil

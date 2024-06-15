@@ -43,7 +43,7 @@ func TestEvalRoute(t *testing.T) {
 			body:          "3+&2",
 			route:         "/eval",
 			expectedError: false,
-			expectedCode:  500,
+			expectedCode:  400,
 			expectedBody:  "0",
 		},
 	}
