@@ -67,6 +67,10 @@ func validateExpression(input string) error {
 		return fmt.Errorf("empty expression")
 	}
 
+	// TODO: we want this to end with number followed by optional parentheses or spaces
+	// but that doesn't handle checking for balanced parens.
+	// We could add that check without a regex by writing a func that checks for balanced parens or just
+	// not support parens (and put that check back in the front end
 	matched, err := regexp.Match(`^[\d\\+\-*\/ \(\)\.]+[\d\)]$`, []byte(input))
 
 	if !matched || err != nil {
