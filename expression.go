@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"github.com/expr-lang/expr"
+	"reflect"
 	"strings"
 )
 
@@ -42,7 +44,7 @@ func evaluateExpression(expression string) (float64, error) {
 		v := output.(int)
 		return float64(v), nil
 	}
-	return 0, nil
+	return 0, fmt.Errorf("unable to cast return value of type %v to float64", reflect.TypeOf(output))
 }
 
 // cleanString replaces newlines with spaces. Not strictly needed, but it seems cleaner

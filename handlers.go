@@ -30,7 +30,7 @@ func eval(c fiber.Ctx) error {
 	err := json.Unmarshal(body, &payload)
 	if err != nil {
 		log.Errorf("bad request for payload %v", requestEval)
-		return c.Status(400).SendString(err.Error())
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
 	err = validateExpression(payload.Input)
@@ -42,8 +42,8 @@ func eval(c fiber.Ctx) error {
 	expression, err := evaluateExpression(payload.Input)
 
 	// Since the expression language doesn't seem to differentiate kinds of errors
-	// this error could be a 422 (unprossible entity) or a 500 (server error)
-	// 500 seems a safer defauly
+	// this error could be a 422 (unprocessable entity) or a 500 (server error)
+	// 500 seems a safer default if there is a change that it might be something else
 	if err != nil {
 		log.Errorf("Error evaluating %s", payload.Input)
 		return c.Status(http.StatusInternalServerError).SendString(err.Error())
@@ -57,7 +57,8 @@ func eval(c fiber.Ctx) error {
 	},
 	)
 	if err != nil {
-		return c.SendStatus(500)
+		log.Errorf("Error returning result %s", err.Error())
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
 	c.Set("Content-type", "application/json; charset=utf-8")
 	return err
@@ -81,7 +82,6 @@ func validateExpression(input string) error {
 		return err
 	}
 	matched := re.MatchString(input)
-	//matched, err := regexp.Match(`^[\d\s\\+\-*\/ \(\)\.]+[\d\)]$`, []byte(input))
 
 	if !matched {
 		return fmt.Errorf("invalid chars")
