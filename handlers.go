@@ -23,7 +23,7 @@ func eval(c fiber.Ctx) error {
 	requestLength := len(requestEval)
 	log.Infof("reqeust length = %d", requestLength)
 	if requestLength > MAX_REQUEST_LENGTH {
-		return c.Status(413).SendString("request is too large")
+		return c.Status(http.StatusRequestEntityTooLarge).SendString("request is too large")
 	}
 
 	log.Infof("Got a request %V", requestEval)
@@ -35,14 +35,18 @@ func eval(c fiber.Ctx) error {
 
 	err = validateExpression(payload.Input)
 	if err != nil {
-		return c.Status(400).SendString(err.Error())
+		return c.Status(http.StatusUnprocessableEntity).SendString(err.Error())
 	}
 
 	log.Infof("processing %s", payload)
 	expression, err := evaluateExpression(payload.Input)
+
+	// Since the expression language doesn't seem to differentiate kinds of errors
+	// this error could be a 422 (unprossible entity) or a 500 (server error)
+	// 500 seems a safer defauly
 	if err != nil {
 		log.Errorf("Error evaluating %s", payload.Input)
-		return c.Status(500).SendString(err.Error())
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
 	respValue := strconv.FormatFloat(expression, 'f', -1, 32)
 
@@ -71,9 +75,15 @@ func validateExpression(input string) error {
 	// but that doesn't handle checking for balanced parens.
 	// We could add that check without a regex by writing a func that checks for balanced parens or just
 	// not support parens (and put that check back in the front end
-	matched, err := regexp.Match(`^[\d\\+\-*\/ \(\)\.]+[\d\)]$`, []byte(input))
+	// Optimization: use Compile to initialize this at startup
+	re, err := regexp.Compile(`^[\d\s\\+\-*\/\(\)\.]+[\s\d\)]$`)
+	if err != nil {
+		return err
+	}
+	matched := re.MatchString(input)
+	//matched, err := regexp.Match(`^[\d\s\\+\-*\/ \(\)\.]+[\d\)]$`, []byte(input))
 
-	if !matched || err != nil {
+	if !matched {
 		return fmt.Errorf("invalid chars")
 	}
 

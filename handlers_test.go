@@ -23,6 +23,20 @@ func Test_validateExpression(t *testing.T) {
 			wantErr: assert.NoError,
 		},
 		{
+			name: "newlines at end",
+			args: args{
+				input: "1+2*3-4 /8\n",
+			},
+			wantErr: assert.NoError,
+		},
+		{
+			name: "embedded newlines",
+			args: args{
+				input: "1+2*3\n-4 /8\n",
+			},
+			wantErr: assert.NoError,
+		},
+		{
 			name: "pass-parens",
 			args: args{
 				input: "(1+2*3-4 /8)",

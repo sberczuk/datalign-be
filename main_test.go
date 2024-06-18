@@ -37,6 +37,22 @@ func TestEvalRoute(t *testing.T) {
 			expectedBody:  "5",
 		},
 		{
+			description:   "evalRoute with embedded newlines",
+			body:          "3+\n2",
+			route:         "/eval",
+			expectedError: false,
+			expectedCode:  200,
+			expectedBody:  "5",
+		},
+		{
+			description:   "evalRoute with embedded and trailing newlines",
+			body:          "3+\n2\n",
+			route:         "/eval",
+			expectedError: false,
+			expectedCode:  200,
+			expectedBody:  "5",
+		},
+		{
 			// this error can come from the eval or the validation.
 			// TODO: Add a message
 			description:   "evalRoute error",
